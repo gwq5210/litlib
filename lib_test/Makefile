@@ -5,6 +5,7 @@ CURL_LIB=$(THIRDPARTY_LIB_DIR)/libcurl.a
 JEMALLOC_LIB=$(THIRDPARTY_LIB_DIR)/libjemalloc.a
 MYSQL_LIB=$(THIRDPARTY_LIB_DIR)/libmysqlclient.a
 PROTOBUF_LIB=$(THIRDPARTY_LIB_DIR)/libprotobuf.a
+UTIL_DIR=../utils
 CC=g++ -g -Wall -O2
 
 ################## Begin sys lib #############################
@@ -17,9 +18,16 @@ LIB += $(CURL_LIB) $(JEMALLOC_LIB) $(MYSQL_LIB) $(PROTOBUF_LIB)
 INC += -I$(THIRDPARTY_INC)
 ################## End sys lib ##############################
 
+################## Begin util lib #############################
+LIB += 
+INC += -I$(UTIL_DIR)
+################## End sys lib ##############################
+
 FLG += 
+TEST_FLG += -DSDS_TEST
 
 BASEOBJ = \
+$(UTIL_DIR)/sds.o
 
 ################## Begin User definitions ####################
 ## define process name
@@ -36,13 +44,13 @@ all:
 
 $(USER_BIN): ${USER_ALL_OBJ}
 	rm -f $@
-	$(CC) -o $@ $(FLG) $(INC) $^ $(LIB)
+	$(CC) -o $@ $(TEST_FLG) $(FLG) $(INC) $^ $(LIB)
 
 %.o: %.cpp
-	$(CC) $(INC) -c -o $@ $(FLG) $<
+	$(CC) $(INC) -c -o $@ $(TEST_FLG) $(FLG) $<
 
 %.o: %.cc
-	$(CC) $(INC) -c -o $@  $(FLG) $<
+	$(CC) $(INC) -c -o $@ $(TEST_FLG) $(FLG) $<
  
 clean:
 	rm -f ${USER_BIN} ${USER_OBJ}
