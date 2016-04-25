@@ -8,6 +8,10 @@
 #ifndef _SDS_H
 #define _SDS_H
 
+#include <stdio.h>
+
+namespace util {
+
 #define SDS_MAGIC 0x4C8A6DE1
 #define SDS_MAX_PREMALLOC (1024 * 1024)
 
@@ -20,7 +24,8 @@ struct sds_header {
     char buf[];
 };
 
-sds sdsnew(const char *str);
+sds sdsnew(const char *str = NULL);
+sds sdsnew(int len);
 sds sdsnew(const void *buf, int len);
 sds sdsnew(const sds s);
 int sdslen(const sds s);
@@ -29,6 +34,10 @@ bool sdscheck(const sds s);
 sds sdscpy(sds s, const char *str);
 sds sdscpy(sds s, const void *buf, int buf_len);
 sds sdscpy(sds dst, const sds src);
+sds sdscat(sds s, const void *buf, int buf_len);
+sds sdscat(sds s, const char *str);
+sds sdscat(sds dst, const sds src);
+void sdsclear(sds s);
 void sdsfree(sds s);
 sds sdsgrow(sds s, int addlen);
 void sdsprint(const sds s, FILE *fp = stdout);
@@ -36,5 +45,7 @@ void sdsprint(const sds s, FILE *fp = stdout);
 #ifdef SDS_TEST
 int sds_test(int argc, char *argv[]);
 #endif      // SDS_TEST
+
+}       // namespace util
 
 #endif      // _SDS_H

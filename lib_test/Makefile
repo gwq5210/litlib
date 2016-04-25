@@ -1,6 +1,7 @@
 THIRDPARTY=../thirdparty
 THIRDPARTY_INC=../thirdparty/include
 THIRDPARTY_LIB_DIR=../thirdparty/lib
+# make ssl
 CURL_LIB=$(THIRDPARTY_LIB_DIR)/libcurl.a
 JEMALLOC_LIB=$(THIRDPARTY_LIB_DIR)/libjemalloc.a
 MYSQL_LIB=$(THIRDPARTY_LIB_DIR)/libmysqlclient.a
@@ -25,9 +26,11 @@ INC += -I$(UTIL_DIR)
 
 FLG += 
 TEST_FLG += -DSDS_TEST
+TEST_FLG += -DCURL_TOOL_TEST
 
 BASEOBJ = \
-$(UTIL_DIR)/sds.o
+$(UTIL_DIR)/sds.o \
+$(UTIL_DIR)/curl_tool.o
 
 ################## Begin User definitions ####################
 ## define process name

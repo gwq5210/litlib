@@ -9,6 +9,9 @@
 #include <cstring>
 
 #include "sds.h"
+#include "curl_tool.h"
+
+using namespace util;
 
 int jemalloc_test(int argc, char *argv[]);
 
@@ -16,5 +19,6 @@ int main(int argc, char *argv[])
 {
     jemalloc_test(argc, argv);
     sds_test(argc, argv);
+    curl_tool_test(argc, argv);
 	return 0;
 }

@@ -13,9 +13,18 @@
 #include "sds.h"
 #include "error.h"
 
-sds sdsnew(const char *str)
+namespace util {
+
+sds sdsnew(const char *str/* = NULL */)
 {
     return sdsnew(str, strlen(str));
+}
+
+sds sdsnew(int len)
+{
+    sds s = sdsnew(NULL, len);
+    sdsclear(s);
+    return s;
 }
 
 sds sdsnew(const void *buf, int len)
@@ -111,10 +120,50 @@ sds sdscpy(sds s, const void *buf, int buf_len)
 
 sds sdscpy(sds dst, const sds src)
 {
-    if (!sdscheck(src)) {
+    return sdscpy(dst, src, sdslen(src));
+}
+
+sds sdscat(sds s, const void *buf, int buf_len)
+{
+    if (!sdscheck(s)) {
         return NULL;
     }
-    return sdscpy(dst, src, sdslen(src));
+    int len = sdslen(s);
+    int free = sdsavail(s);
+    if (free < buf_len) {
+        s = sdsgrow(s, buf_len);
+        if (s == NULL) {
+            return NULL;
+        }
+        free = sdsavail(s);
+    }
+    sds_header *sh = (sds_header *)(s - sizeof(sds_header));
+    memcpy(s + len, buf, buf_len);
+    sh->len += buf_len;
+    sh->free -= buf_len;
+    s[sh->len] = '\0';
+    return s;
+}
+
+sds sdscat(sds s, const char *str)
+{
+    return sdscat(s, str, strlen(str));
+}
+
+sds sdscat(sds dst, const sds src)
+{
+    return sdscat(dst, src, sdslen(src));
+}
+
+void sdsclear(sds s)
+{
+    if (!sdscheck(s)) {
+        return;
+    }
+    sds_header *sh = (sds_header *)(s - sizeof(sds_header));
+    sh->free += sh->len;
+    sh->len = 0;
+    s[0] = '\0';
 }
 
 void sdsfree(sds s)
@@ -128,6 +177,9 @@ void sdsfree(sds s)
 
 sds sdsgrow(sds s, int addlen)
 {
+    if (!sdscheck(s)) {
+        return NULL;
+    }
     int free = sdsavail(s);
     if (free >= addlen) {
         return s;
@@ -154,13 +206,18 @@ void sdsprint(const sds s, FILE *fp/* = stdout */)
         fprintf(fp, "sds error!");
     }
     sds_header *sh = (sds_header *)(s - sizeof(sds_header));
-    fprintf(fp, "s->magic = %X\n", sh->magic);
-    fprintf(fp, "s->len = %d\n", sh->len);
-    fprintf(fp, "s->free = %d\n", sh->free);
+    fprintf(fp, "sh->magic = %X\n", sh->magic);
+    fprintf(fp, "sh->len = %d\n", sh->len);
+    fprintf(fp, "sh->free = %d\n", sh->free);
+    if (sh->len == 0) {
+        fprintf(fp, "sh->buf is empty!\n");
+        return;
+    }
     fprintf(fp, "s->buf:\n");
     int col = 10;
     int row = sh->len / col + (sh->len % col ? 1 : 0);
     for (int i = 0; i < row; ++i) {
+        fprintf(fp, "%010X: ", i);
         for (int j = 0; j < col; ++j) {
             int cnt = i * col + j;
             if (cnt >= sh->len) {
@@ -188,8 +245,13 @@ int sds_test(int argc, char *argv[])
 {
     sds s = sdsnew("nihao______fdajfkdsajfklj\0nifdhf", 32);        // 32
     sdsprint(s);
+    s = sdscat(s, "nihao", 5);
+    s = sdscat(s, "nih\t\nao", 7);
+    sdsprint(s);
     sdsfree(s);
     return 0;
 }
 
 #endif      // SDS_TEST
+
+}       // namespace util

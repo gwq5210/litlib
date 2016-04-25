@@ -8,10 +8,18 @@
 #ifndef _ERROR_H
 #define _ERROR_H
 
-enum err_code {
+namespace util {
+
+enum ret_status {
+    OK = 0,
     ERR_ALLOC = -1,
     ERR_PARAM = -2,
-    ERR_DATA = -3
+    ERR_DATA = -3,
+    ERR_INIT = -4,
+    ERR_NOINIT = -5,
+    ERR_SETURL = -6,
 };
+
+}       // namespace util
 
 #endif      // _ERROR_H
