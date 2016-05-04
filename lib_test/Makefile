@@ -7,16 +7,17 @@ JEMALLOC_LIB=$(THIRDPARTY_LIB_DIR)/libjemalloc.a
 MYSQL_LIB=$(THIRDPARTY_LIB_DIR)/libmysqlclient.a
 PROTOBUF_LIB=$(THIRDPARTY_LIB_DIR)/libprotobuf.a
 UTIL_DIR=../utils
-CC=g++ -g -Wall -O2
+CC=g++ -g -Wall
 
 ################## Begin sys lib #############################
-LIB = -pthread
+LIB = -pthread -ldl
 INC = 
 ################## End sys lib ##############################
 
 ################## Begin thirdparty lib #############################
 LIB += $(CURL_LIB) $(JEMALLOC_LIB) $(MYSQL_LIB) $(PROTOBUF_LIB)
 INC += -I$(THIRDPARTY_INC)
+INC += -I$(THIRDPARTY_INC)/mysql
 ################## End sys lib ##############################
 
 ################## Begin util lib #############################
@@ -26,11 +27,19 @@ INC += -I$(UTIL_DIR)
 
 FLG += 
 TEST_FLG += -DSDS_TEST
-TEST_FLG += -DCURL_TOOL_TEST
+TEST_FLG += -DCURL_HELPER_TEST
+TEST_FLG += -DEPOLL_HELPER_TEST
+TEST_FLG += -DCOMMON_TOOL_TEST
+TEST_FLG += -DMYSQL_HELPER_TEST
+TEST_FLG += -DCFG_HELPER_TEST
 
 BASEOBJ = \
 $(UTIL_DIR)/sds.o \
-$(UTIL_DIR)/curl_tool.o
+$(UTIL_DIR)/curl_helper.o \
+$(UTIL_DIR)/epoll_helper.o \
+$(UTIL_DIR)/common_tool.o \
+$(UTIL_DIR)/mysql_helper.o \
+$(UTIL_DIR)/cfg_helper.o
 
 ################## Begin User definitions ####################
 ## define process name

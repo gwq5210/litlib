@@ -11,11 +11,11 @@
 
 #include <jemalloc/jemalloc.h>
 
-int jemalloc_test(int argc, char *argv[])
+int jemalloc_test()
 {
-    char *s = (char *)malloc(1024);
+    char *s = (char *)jemalloc(1024);
     strcpy(s, "hello jemalloc!");
     printf("%s\n", s);
-    free(s);
+    jefree(s);
 	return 0;
 }

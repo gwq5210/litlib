@@ -56,28 +56,28 @@ extern "C" {
  * these macro definitions.
  */
 #ifndef JEMALLOC_NO_RENAME
-#  define je_malloc_conf malloc_conf
-#  define je_malloc_message malloc_message
-#  define je_malloc malloc
-#  define je_calloc calloc
-#  define je_posix_memalign posix_memalign
-#  define je_aligned_alloc aligned_alloc
-#  define je_realloc realloc
-#  define je_free free
-#  define je_mallocx mallocx
-#  define je_rallocx rallocx
-#  define je_xallocx xallocx
-#  define je_sallocx sallocx
-#  define je_dallocx dallocx
-#  define je_sdallocx sdallocx
-#  define je_nallocx nallocx
-#  define je_mallctl mallctl
-#  define je_mallctlnametomib mallctlnametomib
-#  define je_mallctlbymib mallctlbymib
-#  define je_malloc_stats_print malloc_stats_print
-#  define je_malloc_usable_size malloc_usable_size
-#  define je_memalign memalign
-#  define je_valloc valloc
+#  define je_malloc_conf jemalloc_conf
+#  define je_malloc_message jemalloc_message
+#  define je_malloc jemalloc
+#  define je_calloc jecalloc
+#  define je_posix_memalign jeposix_memalign
+#  define je_aligned_alloc jealigned_alloc
+#  define je_realloc jerealloc
+#  define je_free jefree
+#  define je_mallocx jemallocx
+#  define je_rallocx jerallocx
+#  define je_xallocx jexallocx
+#  define je_sallocx jesallocx
+#  define je_dallocx jedallocx
+#  define je_sdallocx jesdallocx
+#  define je_nallocx jenallocx
+#  define je_mallctl jemallctl
+#  define je_mallctlnametomib jemallctlnametomib
+#  define je_mallctlbymib jemallctlbymib
+#  define je_malloc_stats_print jemalloc_stats_print
+#  define je_malloc_usable_size jemalloc_usable_size
+#  define je_memalign jememalign
+#  define je_valloc jevalloc
 #endif
 
 #include <stdlib.h>

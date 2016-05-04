@@ -17,7 +17,9 @@ enum ret_status {
     ERR_DATA = -3,
     ERR_INIT = -4,
     ERR_NOINIT = -5,
-    ERR_SETURL = -6,
+    ERR_SYSCALL = -6,
+    ERR_NODATA = -7,
+    ERR_LIBCALL = -8,
 };
 
 }       // namespace util
