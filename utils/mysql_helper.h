@@ -18,7 +18,7 @@ namespace util {
 class mysql_helper {
 public:
     mysql_helper(): conn(NULL), result(NULL), errmsg(NULL), host(NULL), user(NULL), passwd(NULL), db_name(NULL), port(0),
-        unix_socket(NULL), client_flag(0), charset(NULL), connect_timeout_s(-1), read_timeout_s(-1), write_timeout_s(-1), sql_buf(NULL) { errmsg = sdsnewlen(1024); sql_buf = sdsnewlen(1024); }
+        unix_socket(NULL), client_flag(0), charset(NULL), connect_timeout_s(-1), read_timeout_s(-1), write_timeout_s(-1), sql_buf(NULL) { init(); }
     ~mysql_helper()
     {
         clear();
@@ -31,6 +31,7 @@ public:
         const char *db_unix_socket = NULL, unsigned long db_client_flag = 0, const char *db_charset = "utf8")
     {
         clear();
+        init();
         return connect(db_host, db_user, db_passwd, db, db_port, db_connect_timeout_s, db_read_timeout_s,
             db_write_timeout_s, db_unix_socket, db_client_flag, db_charset);
     }
@@ -39,6 +40,18 @@ public:
         if (conn == NULL || mysql_ping(conn)) {
             return reconnect(host, user, passwd, db_name, port, connect_timeout_s, read_timeout_s,
                 write_timeout_s, unix_socket, client_flag, charset);
+        }
+        return 0;
+    }
+    int init()
+    {
+        errmsg = sdsnewlen(1024);
+        if (errmsg == NULL) {
+            return ERR_LIBCALL;
+        }
+        sql_buf = sdsnewlen(1024); 
+        if (sql_buf == NULL) {
+            return ERR_LIBCALL;
         }
         return 0;
     }

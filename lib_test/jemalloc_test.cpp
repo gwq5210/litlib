@@ -5,9 +5,9 @@
 	> Created Time: Fri Feb 26 06:08:49 2016
  ************************************************************************/
 
-#include <cstdio>
-#include <cstring>
-#include <cstdlib>
+#include <stdio.h>
+#include <string.h>
+#include <stdlib.h>
 
 #include <jemalloc/jemalloc.h>
 

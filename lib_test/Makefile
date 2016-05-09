@@ -32,6 +32,10 @@ TEST_FLG += -DEPOLL_HELPER_TEST
 TEST_FLG += -DCOMMON_TOOL_TEST
 TEST_FLG += -DMYSQL_HELPER_TEST
 TEST_FLG += -DCFG_HELPER_TEST
+TEST_FLG += -DREGEX_HELPER_TEST
+TEST_FLG += -DCLIENT_HELPER_TEST
+TEST_FLG += -DSERVER_HELPER_TEST
+TEST_FLG += -DTHREAD_HELPER_TEST
 
 BASEOBJ = \
 $(UTIL_DIR)/sds.o \
@@ -39,7 +43,11 @@ $(UTIL_DIR)/curl_helper.o \
 $(UTIL_DIR)/epoll_helper.o \
 $(UTIL_DIR)/common_tool.o \
 $(UTIL_DIR)/mysql_helper.o \
-$(UTIL_DIR)/cfg_helper.o
+$(UTIL_DIR)/cfg_helper.o \
+$(UTIL_DIR)/regex_helper.o \
+$(UTIL_DIR)/client_helper.o \
+$(UTIL_DIR)/server_helper.o \
+$(UTIL_DIR)/thread_helper.o
 
 ################## Begin User definitions ####################
 ## define process name

@@ -5,8 +5,8 @@
 	> Created Time: 2016年04月25日 星期一 23时21分59秒
  ************************************************************************/
 
-#ifndef _EPOLL_HELPER_
-#define _EPOLL_HELPER_
+#ifndef _EPOLL_HELPER_H
+#define _EPOLL_HELPER_H
 
 #include <sys/epoll.h>
 
@@ -56,4 +56,4 @@ int epoll_helper_test();
 
 }
 
-#endif      // _EPOLL_HELPER_
+#endif      // _EPOLL_HELPER_H

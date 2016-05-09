@@ -5,10 +5,10 @@
 	> Created Time: Sat 23 Apr 2016 07:22:25 PM CST
  ************************************************************************/
 
-#include <cstring>
-#include <cstdlib>
-#include <cstdio>
-#include <cctype>
+#include <string.h>
+#include <stdlib.h>
+#include <stdio.h>
+#include <ctype.h>
 
 #include "sds.h"
 #include "error.h"
@@ -45,7 +45,7 @@ sds sdsnewlen(const void *buf, int len)
     sh->free = 0;
 
     if (buf && len) {
-        memcpy(sh->buf, buf, len);
+        memmove(sh->buf, buf, len);
     }
     sh->buf[len] = '\0';
 
@@ -77,7 +77,7 @@ sds sdscpylen(sds &s, const void *buf, int buf_len)
     }
     sds_header *sh = (sds_header *)(s - sizeof(sds_header));
     sh->magic = SDS_MAGIC;
-    memcpy(sh->buf, buf, buf_len); sh->buf[buf_len] = '\0';
+    memmove(sh->buf, buf, buf_len); sh->buf[buf_len] = '\0';
     sh->len = buf_len;
     sh->free = totlen - buf_len;
     return s;
@@ -103,7 +103,7 @@ sds sdscatlen(sds &s, const void *buf, int buf_len)
         avail = sdsavail(s);
     }
     sds_header *sh = (sds_header *)(s - sizeof(sds_header));
-    memcpy(s + len, buf, buf_len);
+    memmove(s + len, buf, buf_len);
     sh->len += buf_len;
     sh->free -= buf_len;
     s[sh->len] = '\0';
@@ -267,6 +267,32 @@ sds *sdssplitlen(const sds s, const sds sep, int &count, int split_type/* = SPLI
     ++real_count;
     count = real_count;
     return res;
+}
+
+sds sdstoupper(sds s)
+{
+    if (!sdscheck(s)) {
+        return NULL;
+    }
+
+    int len = sdslen(s);
+    for (int i = 0; i < len; ++i) {
+        s[i] = toupper(s[i]);
+    }
+    return s;
+}
+
+sds sdstolower(sds s)
+{
+    if (!sdscheck(s)) {
+        return NULL;
+    }
+
+    int len = sdslen(s);
+    for (int i = 0; i < len; ++i) {
+        s[i] = tolower(s[i]);
+    }
+    return s;
 }
 
 int sdssplitfree(sds *&s, int count)
@@ -526,6 +552,13 @@ int sds_test()
         printf("%s\n", res[i]);
     }
     sdssplitfree(res, count);
+    sdsfree(s);
+
+    s = sdsnew("nihaoAFDA");
+    sdstoupper(s);
+    test_cond("sdstoupper(\"nihaoAFDA\")", strcmp(s, "NIHAOAFDA") == 0);
+    sdstolower(s);
+    test_cond("sdstoupper(\"NIHAOAFDA\")", strcmp(s, "nihaoafda") == 0);
     sdsfree(s);
 
     test_report();

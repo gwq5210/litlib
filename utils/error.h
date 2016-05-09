@@ -20,6 +20,9 @@ enum ret_status {
     ERR_SYSCALL = -6,
     ERR_NODATA = -7,
     ERR_LIBCALL = -8,
+    ERR_EAGAIN = -9,
+    ERR_REG_NOMATCH = -10,
+    ERR_TIMEOUT = -11,
 };
 
 }       // namespace util

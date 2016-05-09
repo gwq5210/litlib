@@ -10,11 +10,13 @@
 #include <unistd.h>
 #include <errno.h>
 #include <string.h>
+#include <fcntl.h>
 
 #include "common_tool.h"
 #include "jemalloc/jemalloc.h"
 
 #include "error.h"
+#include "epoll_helper.h"
 
 namespace util {
 
@@ -114,6 +116,111 @@ sds read_line(FILE *fp)
     }
     sdstrim(s, "\n");
     return s;
+}
+
+int socket_read(int socket_fd, sds &read_buf, sds &errmsg, int timeout_ms/* = -1*/, int should_len/* = -1*/)
+{
+    if (read_buf == NULL) {
+        set_errmsg(errmsg, "param error! read_buf is NULL");
+        return ERR_PARAM;
+    }
+
+    if (socket_fd < 0) {
+        set_errmsg(errmsg, "no connect! socket_fd[%d]", socket_fd);
+        return ERR_NOINIT;
+    }
+
+    epoll_helper epoll;
+    if (epoll.create(64) < 0) {
+        set_errmsg(errmsg, "epoll create error! %s", epoll.get_errmsg());
+        return ERR_LIBCALL;
+    }
+    epoll.add(socket_fd, EPOLLIN);
+    int ret = epoll.wait(timeout_ms);
+    if (ret < 0) {
+        set_errmsg(errmsg, "wait error! %s", epoll.get_errmsg());
+        return ERR_LIBCALL;
+    } else if (ret == 0) {
+        set_errmsg(errmsg, "read timeout! no fd reday!");
+        return ERR_TIMEOUT;
+    }
+
+    int flag = 0;
+    if (should_len <= 0) {
+        flag = fcntl(socket_fd, F_GETFL) | O_NONBLOCK;
+        if (flag < 0) {
+            set_errmsg(errmsg, "fcntl get fd[%d] flag error! errno[%d], %s", socket_fd, errno, strerror(errno));
+            return ERR_SYSCALL;
+        }
+        if (fcntl(socket_fd, F_SETFL, flag) < 0) {
+            set_errmsg(errmsg, "fcntl set fd[%d] flag[%d] error! errno[%d], %s", socket_fd, flag, errno, strerror(errno));
+            return ERR_SYSCALL;
+        }
+    }
+
+    int len = should_len;
+    int read_len = 0;
+    char buf[1024];
+    int buflen = sizeof(buf);
+    sdsclear(read_buf);
+    while (1) {
+        if (should_len > 0) {
+            if (len <= 0) {
+                break;
+            }
+            if (len < buflen) {
+                buflen = len;
+            }
+        }
+        read_len = read(socket_fd, buf, buflen);
+        if (read_len < 0) {
+            if (errno == EAGAIN) {
+                break;
+            }
+            set_errmsg(errmsg, "read error! errno[%d], %s", errno, strerror(errno));
+            return ERR_LIBCALL;
+        } else if (read_len == 0) {
+            break;
+        }
+        sdscatlen(read_buf, buf, read_len);
+        len -= read_len;
+    }
+
+    if (should_len <= 0) {
+        flag &= ~O_NONBLOCK;
+        if (fcntl(socket_fd, F_SETFL, flag) < 0) {
+            set_errmsg(errmsg, "fcntl set fd[%d] flag[%d] error! errno[%d], %s", socket_fd, flag, errno, strerror(errno));
+            return ERR_SYSCALL;
+        }
+    }
+
+    return 0;
+}
+
+int socket_write(int socket_fd, const char *write_buf, int buflen, sds &errmsg)
+{
+    if (write_buf == NULL || buflen <= 0) {
+        set_errmsg(errmsg, "param error! write_buf is NULL or buflen less then zero!");
+        return ERR_PARAM;
+    }
+
+    if (socket_fd < 0) {
+        set_errmsg(errmsg, "no connect! socket_fd[%d]", socket_fd);
+        return ERR_NOINIT;
+    }
+
+    int done = 0;
+    while (done < buflen) {
+        int ret = write(socket_fd, write_buf + done, buflen - done);
+        if (ret < 0) {
+            set_errmsg(errmsg, "write error! socket_fd[%d], errno[%d], %s", socket_fd, errno, strerror(errno));
+            return ERR_NOINIT;
+        } else {
+            done += ret;
+        }
+    }
+
+    return 0;
 }
 
 #ifdef COMMON_TOOL_TEST

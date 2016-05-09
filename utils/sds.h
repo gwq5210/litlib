@@ -46,6 +46,8 @@ sds sdsltrim(sds &s, const char *cset = " \t\n");
 sds sdsrtrim(sds &s, const char *cset = " \t\n");
 sds *sdssplit(const sds s, const char *sep, int &count, int split_type = SPLIT_ALL);
 sds *sdssplitlen(const sds s, const sds sep, int &count, int split_type = SPLIT_ALL);
+sds sdstoupper(sds s);
+sds sdstolower(sds s);
 int sdssplitfree(sds *&s, int count);
 void sdsclear(sds s);
 void sdsfree(sds &s);

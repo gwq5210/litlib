@@ -5,8 +5,8 @@
 	> Created Time: 2016年04月25日 星期一 23时22分23秒
  ************************************************************************/
 
-#ifndef _CFG_HELPER_
-#define _CFG_HELPER_
+#ifndef _CFG_HELPER_H
+#define _CFG_HELPER_H
 
 #include <map>
 #include <string>
@@ -52,4 +52,4 @@ int cfg_helper_test();
 
 }
 
-#endif      // _CFG_HELPER_
+#endif      // _CFG_HELPER_H

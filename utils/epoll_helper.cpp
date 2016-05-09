@@ -100,7 +100,8 @@ int epoll_helper::wait(int timeout_ms)
         return ERR_SYSCALL;
     }
     ready = ret;
-    return 0;
+    idx = 0;
+    return ret;
 }
 
 int epoll_helper::get_events(int &evt, long long &usr_data)
@@ -130,11 +131,15 @@ int epoll_helper_test()
         return -1;
     }
     eh.add(STDIN_FILENO, EPOLLIN);
-    int ret = eh.wait(-1);
-    if (ret < 0) {
+    int timeout_ms = 1000;
+    int ret = eh.wait(timeout_ms);
+    if (ret <= 0) {
         printf("no fd ready! %s\n", eh.get_errmsg());
         return -1;
+    } else {
+        printf("wait %dms done!\n", timeout_ms);
     }
+
     int evt = 0;
     long long fd = -1;
     while (eh.get_events(evt, fd) == 0) {

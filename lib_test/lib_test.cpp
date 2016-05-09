@@ -6,14 +6,18 @@
  ************************************************************************/
 
 #include <stdio.h>
-#include <cstring>
+#include <string.h>
 
 #include "sds.h"
 #include "curl_helper.h"
 #include "epoll_helper.h"
-#include "test_helper.h"
 #include "mysql_helper.h"
 #include "cfg_helper.h"
+#include "regex_helper.h"
+#include "common_tool.h"
+#include "client_helper.h"
+#include "server_helper.h"
+#include "thread_helper.h"
 
 using namespace std;
 using namespace util;
@@ -21,11 +25,12 @@ using namespace util;
 int jemalloc_test();
 int all_test();
 
-const static int test_num = 8;
+const static int test_num = 12;
 char test_name[test_num][1024] = {"all", "jemalloc", "sds", "curl_helper", "epoll_helper", "common_tool",
-    "mysql_helper", "cfg_helper"};
+    "mysql_helper", "cfg_helper", "regex_helper", "client_helper", "server_helper", "thread_helper"};
 int (*test_func[test_num])() = {all_test, jemalloc_test, sds_test, curl_helper_test, epoll_helper_test,
-    common_tool_test, mysql_helper_test, cfg_helper_test};
+    common_tool_test, mysql_helper_test, cfg_helper_test, regex_helper_test, client_helper_test, server_helper_test,
+    thread_helper_test};
 
 int all_test()
 {
