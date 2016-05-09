@@ -53,6 +53,34 @@ sds load_file(const char *file_name)
     return s;
 }
 
+sds load_file(FILE *fp)
+{
+    if (fp == NULL) {
+        return NULL;
+    }
+    char buf[1024];
+    int buflen = sizeof(buf);
+    sds s = sdsnewlen(1024);
+    if (s == NULL) {
+        return NULL;
+    }
+    do {
+        size_t read_size = fread(buf, 1, buflen, fp);
+        if (read_size <= 0) {
+            if (feof(fp) != 0) {
+                break;
+            } else if (ferror(fp) != 0) {
+                sdsfree(s);
+                return NULL;
+            }
+        } else {
+            s = sdscatlen(s, buf, read_size);
+        }
+    } while (1);
+
+    return s;
+}
+
 int save_file(const sds s, const char *file_name)
 {
     FILE *fp = fopen(file_name, "wb");
@@ -80,7 +108,7 @@ sds read_line(FILE *fp)
         return NULL;
     }
 
-    char static_buf[5];
+    char static_buf[1024];
     char *buf = static_buf;
     int buflen = sizeof(static_buf);
 
@@ -223,6 +251,33 @@ int socket_write(int socket_fd, const char *write_buf, int buflen, sds &errmsg)
     return 0;
 }
 
+sds exec_cmd(const char *fmt, ...)
+{
+    sds cmd = sdsnewlen(1024);
+    if (cmd == NULL) {
+        return NULL;
+    }
+    va_list ap;
+    va_start(ap, fmt);
+    int ret = vsdsprintf(cmd, fmt, ap);
+    va_end(ap);
+    if (ret < 0) {
+        sdsfree(cmd);
+        return NULL;
+    }
+
+    FILE *fp = popen(cmd, "r");
+    if (fp == NULL) {
+        sdsfree(cmd);
+        return NULL;
+    }
+    sds s = load_file(fp);
+
+    sdsfree(cmd);
+    pclose(fp);
+    return s;
+}
+
 #ifdef COMMON_TOOL_TEST
 
 int common_tool_test()
@@ -250,6 +305,17 @@ int common_tool_test()
         sdsfree(s);
     }
     fclose(fp);
+
+    fp = fopen(__FILE__, "r");
+    s = load_file(fp);
+    printf("%s\n", s);
+    sdsfree(s);
+    fclose(fp);
+
+    s = exec_cmd("ls");
+    printf("%s\n", s);
+    sdsfree(s);
+
     return 0;
 }
 

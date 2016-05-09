@@ -36,6 +36,7 @@ TEST_FLG += -DREGEX_HELPER_TEST
 TEST_FLG += -DCLIENT_HELPER_TEST
 TEST_FLG += -DSERVER_HELPER_TEST
 TEST_FLG += -DTHREAD_HELPER_TEST
+TEST_FLG += -DSHM_HELPER_TEST
 
 BASEOBJ = \
 $(UTIL_DIR)/sds.o \
@@ -47,7 +48,8 @@ $(UTIL_DIR)/cfg_helper.o \
 $(UTIL_DIR)/regex_helper.o \
 $(UTIL_DIR)/client_helper.o \
 $(UTIL_DIR)/server_helper.o \
-$(UTIL_DIR)/thread_helper.o
+$(UTIL_DIR)/thread_helper.o \
+$(UTIL_DIR)/shm_helper.o
 
 ################## Begin User definitions ####################
 ## define process name

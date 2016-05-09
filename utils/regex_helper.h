@@ -42,6 +42,10 @@ public:
         return comp(reg_str, cflags);
     }
     int match(const char *match_str, int cnt = 0, int reg_eflags = 0);
+    sds replace(const char *str, const char *replace_str, int replace_type = REPLACE_ALL)
+    {
+        return replace(str, replace_str, *this, replace_type);
+    }
     const sds group(int cnt)
     {
         if (cnt < 0 || cnt >= count)

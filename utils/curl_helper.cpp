@@ -6,8 +6,9 @@
  ************************************************************************/
 
 #include "curl_helper.h"
+#include "common_tool.h"
 
-#include <cstring>
+#include <string.h>
 
 namespace util {
 
@@ -121,11 +122,20 @@ int curl_helper_test()
     ret = ch.perform(url);
     if (ret < 0) {
         printf("perform url(%s) error! %s\n", url, ch.get_errmsg());
+    } else {
+        printf("perform url %s complete!\n", url);
     }
-    printf("perform url %s complete!\n", url);
     const sds s = ch.get_rsp();
     sdsprint(s);
     printf("rsp len = %d\n", sdslen(s));
+
+    const char *file_name = "test.html";
+    if (save_file(s, file_name) < 0) {
+        printf("save file %s error!\n", file_name);
+        return -1;
+    } else {
+        printf("save file %s success!\n", file_name);
+    }
     return 0;
 }
 

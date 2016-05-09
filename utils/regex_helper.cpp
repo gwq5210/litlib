@@ -181,7 +181,7 @@ int regex_helper_test()
     const char *reg_str = "q(q)";
     regex_helper reg;
     //int ret = reg.comp("^q(q)$", REG_NOSUB | REG_EXTENDED);
-    int ret = reg.comp(reg_str, REG_EXTENDED);
+    int ret = reg.comp(reg_str);
     if (ret < 0) {
         printf("compile regex[%s] error! %s\n", reg_str, reg.get_errmsg());
         return -1;
@@ -233,6 +233,18 @@ int regex_helper_test()
         printf("%s\n", s);
     }
     test_cond(name, strcmp(s, "qqxy") == 0);
+    sdsfree(s);
+
+    const char *new_str = "qqqqqq";
+    const char *new_replace_str = "xy";
+    sdsprintf(name, "replace(\"%s\", \"%s\", \"%s\")", new_str, new_replace_str, reg_str);
+    s = reg.replace(new_str, new_replace_str);
+    if (s == NULL) {
+        printf("replace error!");
+    } else {
+        printf("%s\n", s);
+    }
+    test_cond(name, strcmp(s, "xyxyxy") == 0);
     sdsfree(s);
 
     sdsfree(name);
