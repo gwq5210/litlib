@@ -37,6 +37,7 @@
 namespace util {
 
 sds load_file(const char *file_name);
+sds load_file(FILE *fp);
 int save_file(const sds s, const char *file_name);
 sds read_line(FILE *fp);
 int socket_write(int socket_fd, const char *write_buf, int buflen, sds &errmsg);

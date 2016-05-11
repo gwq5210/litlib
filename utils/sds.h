@@ -49,7 +49,8 @@ sds *sdssplitlen(const sds s, const sds sep, int &count, int split_type = SPLIT_
 sds sdstoupper(sds s);
 sds sdstolower(sds s);
 int sdssplitfree(sds *&s, int count);
-void sdsclear(sds s);
+int sdsclear(sds s);
+int sdssetlen(sds s, int new_len);
 void sdsfree(sds &s);
 sds sdsgrow(sds &s, int addlen);
 void sdsprint(const sds s, FILE *fp = stdout);

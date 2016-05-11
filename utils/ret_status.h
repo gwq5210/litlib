@@ -1,12 +1,12 @@
 /*************************************************************************
-	> File Name: error.h
+	> File Name: ret_status.h
 	> Author: gwq5210
 	> Mail: gwq5210@qq.com 
 	> Created Time: Sun Apr  3 15:44:45 2016
  ************************************************************************/
 
-#ifndef _ERROR_H
-#define _ERROR_H
+#ifndef _RET_STATUS_H
+#define _RET_STATUS_H
 
 namespace util {
 
@@ -23,8 +23,9 @@ enum ret_status {
     ERR_EAGAIN = -9,
     ERR_REG_NOMATCH = -10,
     ERR_TIMEOUT = -11,
+    ERR_EMPTY = -12,
 };
 
 }       // namespace util
 
-#endif      // _ERROR_H
+#endif      // _RET_STATUS_H

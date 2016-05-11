@@ -11,7 +11,7 @@
 #include <ctype.h>
 
 #include "sds.h"
-#include "error.h"
+#include "ret_status.h"
 
 namespace util {
 
@@ -308,15 +308,25 @@ int sdssplitfree(sds *&s, int count)
     return 0;
 }
 
-void sdsclear(sds s)
+int sdsclear(sds s)
+{
+    return sdssetlen(s, 0);
+}
+
+int sdssetlen(sds s, int new_len)
 {
     if (!sdscheck(s)) {
-        return;
+        return ERR_DATA;
     }
     sds_header *sh = (sds_header *)(s - sizeof(sds_header));
-    sh->free += sh->len;
-    sh->len = 0;
-    s[0] = '\0';
+    int totlen = sh->free + sh->len;
+    if (new_len > totlen || new_len < 0) {
+        return ERR_PARAM;
+    }
+    sh->free = totlen - new_len;
+    sh->len = new_len;
+    s[new_len] = '\0';
+    return 0;
 }
 
 void sdsfree(sds &s)

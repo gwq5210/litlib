@@ -11,7 +11,7 @@
 #include "mysql/mysql.h"
 
 #include "sds.h"
-#include "error.h"
+#include "ret_status.h"
 
 namespace util {
 

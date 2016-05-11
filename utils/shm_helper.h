@@ -14,7 +14,7 @@
 #include <string.h>
 
 #include "sds.h"
-#include "error.h"
+#include "ret_status.h"
 #include "common_tool.h"
 
 #define SHM_ATTACH 0

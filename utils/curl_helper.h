@@ -8,7 +8,7 @@
 #ifndef _CURL_HELPER_H
 #define _CURL_HELPER_H
 
-#include "error.h"
+#include "ret_status.h"
 #include "sds.h"
 #include "common_tool.h"
 
