@@ -21,6 +21,7 @@ list &list::operator=(const list &other_list)
 {
     clear();
     push_back(other_list);
+    return *this;
 }
 
 list::~list()
