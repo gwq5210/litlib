@@ -11,6 +11,7 @@
 #include <errno.h>
 #include <string.h>
 #include <fcntl.h>
+#include <ctype.h>
 
 #include "common_tool.h"
 #include "jemalloc/jemalloc.h"
@@ -278,6 +279,61 @@ sds exec_cmd(const char *fmt, ...)
     return s;
 }
 
+int vsystem(const char *fmt, ...)
+{
+    sds cmd = sdsnewlen(1024);
+    if (cmd == NULL) {
+        return ERR_LIBCALL;
+    }
+    va_list ap;
+    va_start(ap, fmt);
+    int ret = vsdsprintf(cmd, fmt, ap);
+    va_end(ap);
+    if (ret < 0) {
+        sdsfree(cmd);
+        return ERR_LIBCALL;
+    }
+
+    ret = system(cmd);
+    sdsfree(cmd);
+    return ret;
+}
+
+int print_bin(const char *buf, int buflen/* = 0*/, FILE *fp/* = stdout*/)
+{
+    if (buf == NULL || buflen < 0) {
+        return ERR_PARAM;
+    }
+    if (buflen == 0) {
+        buflen = strlen(buf);
+    }
+
+    int col = 10;
+    int row = buflen / col + (buflen % col ? 1 : 0);
+    for (int i = 0; i < row; ++i) {
+        fprintf(fp, "%010X: ", i);
+        for (int j = 0; j < col; ++j) {
+            int cnt = i * col + j;
+            if (cnt >= buflen) {
+                fprintf(fp, "  ");
+            } else {
+                fprintf(fp, "%02X", (unsigned char)buf[cnt]);
+            }
+            fprintf(fp, "%s", j == col - 1 ? "\t": " ");
+        }
+        for (int j = 0; j < col; ++j) {
+            int cnt = i * col + j;
+            if (cnt >= buflen) {
+                fprintf(fp, " ");
+            } else {
+                fprintf(fp, "%c", isprint(buf[cnt]) ? buf[cnt] : '.');
+            }
+        }
+        fprintf(fp, "\n");
+    }
+    return 0;
+}
+
 #ifdef COMMON_TOOL_TEST
 
 int common_tool_test()
@@ -312,9 +368,13 @@ int common_tool_test()
     sdsfree(s);
     fclose(fp);
 
+    vsystem("echo nihao > 1");
+
     s = exec_cmd("ls");
     printf("%s\n", s);
     sdsfree(s);
+
+    print_bin("nihao");
 
     return 0;
 }

@@ -10,6 +10,8 @@
 
 #include "common_tool.h"
 
+#include <sys/time.h>
+
 static int _test_num_ = 0;
 static int _test_failed_num_ = 0;
 

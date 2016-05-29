@@ -12,6 +12,7 @@
 
 #include "sds.h"
 #include "ret_status.h"
+#include "common_tool.h"
 
 namespace util {
 
@@ -381,29 +382,7 @@ void sdsprint(const sds s, FILE *fp/* = stdout */)
         return;
     }
     fprintf(fp, "s->buf:\n");
-    int col = 10;
-    int row = sh->len / col + (sh->len % col ? 1 : 0);
-    for (int i = 0; i < row; ++i) {
-        fprintf(fp, "%010X: ", i);
-        for (int j = 0; j < col; ++j) {
-            int cnt = i * col + j;
-            if (cnt >= sh->len) {
-                fprintf(fp, "  ");
-            } else {
-                fprintf(fp, "%02X", (unsigned char)s[cnt]);
-            }
-            fprintf(fp, "%s", j == col - 1 ? "\t": " ");
-        }
-        for (int j = 0; j < col; ++j) {
-            int cnt = i * col + j;
-            if (cnt >= sh->len) {
-                fprintf(fp, " ");
-            } else {
-                fprintf(fp, "%c", isprint(s[cnt]) ? s[cnt] : '.');
-            }
-        }
-        fprintf(fp, "\n");
-    }
+    print_bin(s, sh->len, fp);
 }
 
 int sdsprintf(sds &s, const char *fmt, ...)

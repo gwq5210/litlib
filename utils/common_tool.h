@@ -42,6 +42,9 @@ int save_file(const sds s, const char *file_name);
 sds read_line(FILE *fp);
 int socket_write(int socket_fd, const char *write_buf, int buflen, sds &errmsg);
 int socket_read(int socket_fd, sds &read_buf, sds &errmsg, int timeout_ms = -1, int should_len = -1);
+sds exec_cmd(const char *fmt, ...);
+int vsystem(const char *fmt, ...);
+int print_bin(const char *buf, int buflen = 0, FILE *fp = stdout);
 
 #ifdef COMMON_TOOL_TEST
 
