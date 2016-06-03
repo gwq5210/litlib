@@ -21,29 +21,6 @@ class mutex_helper {
 public:
     mutex_helper(const pthread_mutexattr_t *mutex_attr = NULL): errmsg(NULL) { init(mutex_attr); }
     ~mutex_helper() { clear(); }
-    int init(const pthread_mutexattr_t *mutex_attr)
-    {
-        errmsg = sdsnewlen(1024);
-        if (errmsg == NULL) {
-            return ERR_LIBCALL;
-        }
-        int ret = pthread_mutex_init(&mutex_lock, mutex_attr);
-        if (ret != 0) {
-            set_errmsg(errmsg, "pthread_mutex_init error! errno[%d], %s", ret, strerror(ret));
-            return ERR_SYSCALL;
-        }
-        return 0;
-    }
-    int clear()
-    {
-        int ret = pthread_mutex_destroy(&mutex_lock);
-        if (ret != 0) {
-            set_errmsg(errmsg, "pthread_mutex_destroy error! errno[%d], %s", ret, strerror(ret));
-            return ERR_SYSCALL;
-        }
-        sdsfree(errmsg);
-        return 0;
-    }
     int lock()
     {
         int ret = pthread_mutex_lock(&mutex_lock);
@@ -72,6 +49,30 @@ public:
         return 0;
     }
     const sds get_errmsg() { return errmsg; }
+private:
+    int init(const pthread_mutexattr_t *mutex_attr)
+    {
+        errmsg = sdsnewlen(1024);
+        if (errmsg == NULL) {
+            return ERR_LIBCALL;
+        }
+        int ret = pthread_mutex_init(&mutex_lock, mutex_attr);
+        if (ret != 0) {
+            set_errmsg(errmsg, "pthread_mutex_init error! errno[%d], %s", ret, strerror(ret));
+            return ERR_SYSCALL;
+        }
+        return 0;
+    }
+    int clear()
+    {
+        int ret = pthread_mutex_destroy(&mutex_lock);
+        if (ret != 0) {
+            set_errmsg(errmsg, "pthread_mutex_destroy error! errno[%d], %s", ret, strerror(ret));
+            return ERR_SYSCALL;
+        }
+        sdsfree(errmsg);
+        return 0;
+    }
 private:
     pthread_mutex_t mutex_lock;
     sds errmsg;
