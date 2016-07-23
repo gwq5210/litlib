@@ -79,6 +79,22 @@ public:
         }
         return ret_val[count];
     }
+    pthread_t get_thread_id(int count)
+    {
+        if (thread_count == 0) {
+            set_errmsg(errmsg, "thread not created! thread count is zero!");
+            return -1;
+        }
+        if (count < 0 || count >= count) {
+            set_errmsg(errmsg, "param error! count[%d] less then zero or count[%d] greater equal thread_count[%d]", count, count, thread_count);
+            return -1;
+        }
+        if (thread_id == NULL) {
+            set_errmsg(errmsg, "thread id is NULL!");
+            return -1;
+        }
+        return thread_id[count];
+    }
 private:
     pthread_t *thread_id;
     void **ret_val;
